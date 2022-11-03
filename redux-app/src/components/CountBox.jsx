@@ -1,5 +1,6 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { change, increse } from "../modules/counter";
+import { change, increse,increseAsync,decreaseAsync } from "../modules/counter";
 
 const CountBox = () => {
     //useSelector를 통해서 state의 원하는 값을 가져올수 있다
@@ -8,6 +9,10 @@ const CountBox = () => {
 
     //useDispatch를 통해서 사용할 함수를 가져옴
     const dispatch=useDispatch()
+
+    //Callback함수를 이용해서 함수 새로 만듬 방지
+    const onChange =useCallback((e)=>dispatch(change(e.target.value)),[dispatch])
+
     return ( 
         <div>
             <h1>카운드입니다</h1>
@@ -20,12 +25,20 @@ const CountBox = () => {
                 dispatch(increse())}}>
                 증가
             </button>
+            {/*counter의 리듀서 함수를 수정해서 1씩 감소하는 버튼 */}
             <button onClick={()=>{dispatch({type:'decrease'})}}>감소</button>
+            {/*thunk를 이용하여 비동기로 작성 */}
+            <button onClick={()=>{dispatch(increseAsync())}}>1초뒤 증가</button>
+            {/*thunk를 이용하여 2초뒤 1감소하는 내용 작성 */}
+            <button onClick={()=>{dispatch(decreaseAsync())}}>2초뒤 감소</button>
 
             {/*changeNum값을 바꿀 input */}
             <p>{changeNum}</p>
             <input type="text" onChange={(e)=>{dispatch({type:'change',payload : e.target.value})}}/>
             <input type="text" onChange={(e)=>{dispatch(change(e.target.value))}}/>
+            {/*익명함수 화살표 함수로 작성시 렌더될때마다 함수를 다시 생성 > Callback으로 지정 */}
+            <input type="text" onChange={onChange}/>
+
         </div>
     );
 }
